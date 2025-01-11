@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chiffoumi Game - 1v1</title>
+    <title>Chiffoumi Game</title>
     <style>
-        /* Tes styles ici, je les ai laissés comme avant */
+        /* Ton code CSS ici (garde ton style tel quel) */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -20,7 +20,6 @@
             color: white;
             text-align: center;
         }
-
         .game-container {
             background-color: rgba(0, 0, 0, 0.6);
             padding: 30px;
@@ -29,27 +28,23 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
             text-align: center;
         }
-
         h1 {
             font-size: 40px;
             margin-bottom: 20px;
             color: white;
         }
-
         .choices {
             display: flex;
             justify-content: center;
             margin-top: 20px;
             gap: 20px;
         }
-
         .choice {
             cursor: pointer;
             width: 150px;
             height: 150px;
             transition: transform 0.3s ease;
         }
-
         .choice img {
             width: 100%;
             height: 100%;
@@ -57,11 +52,9 @@
             border: 5px solid transparent;
             background-color: rgba(255, 255, 255, 0.8);
         }
-
         .choice img:hover {
             transform: scale(1.1);
         }
-
         #result-container {
             display: flex;
             justify-content: space-between;
@@ -69,7 +62,6 @@
             margin-top: 40px;
             visibility: hidden;
         }
-
         .result {
             width: 300px;
             height: 300px;
@@ -77,14 +69,12 @@
             justify-content: center;
             align-items: center;
         }
-
         .result img {
             width: 80%;
             height: 80%;
             border-radius: 10px;
             border: 5px solid transparent;
         }
-
         .message {
             font-size: 24px;
             font-weight: bold;
@@ -92,7 +82,6 @@
             color: #fff;
             margin-top: 20px;
         }
-
         .reset-btn {
             margin-top: 20px;
             padding: 15px 30px;
@@ -103,14 +92,12 @@
             cursor: pointer;
             color: #fff;
         }
-
         .reset-btn:hover {
             background: linear-gradient(135deg, #ff9900, #ff6600);
         }
     </style>
 </head>
 <body>
-
     <div class="game-container">
         <h1>Chiffoumi Game</h1>
         <div class="choices" id="choices-container">
@@ -127,103 +114,22 @@
 
         <div id="result-container">
             <div class="result" id="user-result">
-                <img id="user-choice" src="" alt="Votre Choix">
+                <img id="user-choice" src="" alt="Your Choice">
             </div>
             <div class="result" id="computer-result">
-                <img id="computer-choice" src="" alt="Choix de l'Adversaire">
+                <img id="computer-choice" src="" alt="Computer's Choice">
             </div>
         </div>
 
-        <p class="message" id="message">En attente d'un joueur...</p>
-        <button class="reset-btn" onclick="resetGame()">Jouer encore</button>
+        <p class="message" id="message"></p>
+        <button class="reset-btn" onclick="resetGame()">Play Again</button>
     </div>
 
-    <!-- Ajoute les scripts Firebase ici -->
+    <!-- Lier les scripts nécessaires -->
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js"></script>
-
-    <script>
-        // Configuration Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDgpZ2J8W0A3mAVilK0bfI-W2_WZd8fI2k",
-            authDomain: "chiffoumi-c23d3.firebaseapp.com",
-            databaseURL: "https://drk-web.github.io/chiffoumi-game/",
-            projectId: "chiffoumi-c23d3",
-            storageBucket: "chiffoumi-c23d3.firebasestorage.app",
-            messagingSenderId: "916373593336",
-            appId: "1:916373593336:web:ad6dcb1e97c74dceb7ef0d"
-        };
-
-        // Initialiser Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        // Fonction pour envoyer les choix des joueurs à Firebase
-        function sendChoice(player, choice) {
-            database.ref('game/' + player).set({
-                choice: choice
-            });
-
-            // Cacher les boutons de choix et montrer l'attente
-            document.getElementById('choices-container').style.display = 'none';
-            document.getElementById('message').innerText = 'En attente de l\'autre joueur...';
-
-            checkGameStatus();
-        }
-
-        // Fonction pour vérifier les choix des deux joueurs
-        function checkGameStatus() {
-            database.ref('game').on('value', (snapshot) => {
-                const data = snapshot.val();
-
-                if (data.player1 && data.player2) {
-                    document.getElementById('message').innerText = 'Le jeu est en cours !';
-                    document.getElementById('user-choice').src = getChoiceImage(data.player1.choice);
-                    document.getElementById('computer-choice').src = getChoiceImage(data.player2.choice);
-
-                    determineWinner(data.player1.choice, data.player2.choice);
-                }
-            });
-        }
-
-        // Fonction pour obtenir l'image du choix
-        function getChoiceImage(choice) {
-            const choices = {
-                pierre: 'https://i.pinimg.com/736x/e5/90/37/e5903708c6a48f51da6517b497556fa3.jpg',
-                papier: 'https://i.pinimg.com/736x/8e/24/b2/8e24b215121943b23aeea6073acec383.jpg',
-                ciseaux: 'https://i.pinimg.com/736x/ca/84/64/ca8464512623a038e40b6327bab0331b.jpg'
-            };
-            return choices[choice];
-        }
-
-        // Fonction pour déterminer le gagnant
-        function determineWinner(choice1, choice2) {
-            let resultMessage = '';
-            if (choice1 === choice2) {
-                resultMessage = 'C\'est une égalité !';
-            } else if (
-                (choice1 === 'pierre' && choice2 === 'ciseaux') ||
-                (choice1 === 'papier' && choice2 === 'pierre') ||
-                (choice1 === 'ciseaux' && choice2 === 'papier')
-            ) {
-                resultMessage = 'Tu as gagné !';
-            } else {
-                resultMessage = 'L\'adversaire a gagné !';
-            }
-
-            document.getElementById('message').innerText = resultMessage;
-        }
-
-        // Fonction pour réinitialiser le jeu
-        function resetGame() {
-            document.getElementById('choices-container').style.display = 'flex';
-            document.getElementById('result-container').style.visibility = 'hidden';
-            document.getElementById('message').innerText = 'En attente d\'un joueur...';
-
-            // Réinitialiser les données de Firebase
-            database.ref('game').set({});
-        }
-    </script>
+    <script src="game.js"></script> <!-- Lier ton code JavaScript -->
+   
 </body>
 </html>
 
