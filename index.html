@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chiffoumi 1V1 en ligne</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        .game-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        .choices {
+            margin: 20px;
+        }
+
+        .choice {
+            display: inline-block;
+            width: 100px;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .choice:hover {
+            background-color: #555;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        #status {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Chiffoumi 1V1 en ligne</h1>
+        <p id="status">En attente d'un adversaire...</p>
+        
+        <div class="choices" id="choices-container">
+            <div class="choice" onclick="makeChoice('pierre')">Pierre</div>
+            <div class="choice" onclick="makeChoice('papier')">Papier</div>
+            <div class="choice" onclick="makeChoice('ciseaux')">Ciseaux</div>
+        </div>
+
+        <p id="message"></p>
+
+        <!-- Le script Socket.io sera intégré ici -->
+        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+        <script>
+            // Connexion à Socket.io
+            const socket = io('https://votre-serveur-ici');  // Changez l'URL pour votre serveur
+
+            let playerChoice = null;
+
+            // Afficher le message de statut
+            socket.on('status', function(status) {
+                document.getElementById('status').textContent = status;
+            });
+
+            // Recevoir le résultat du jeu
+            socket.on('gameResult', function(result) {
+                document.getElementById('message').textContent = result;
+                document.getElementById('choices-container').style.display = 'none';
+            });
+
+            // Fonction pour envoyer le choix du joueur
+            function makeChoice(choice) {
+                if (playerChoice) return; // Si le joueur a déjà fait son choix, il ne peut pas le changer
+                playerChoice = choice;
+                socket.emit('playerChoice', choice);
+                document.getElementById('status').textContent = "En attente de l'autre joueur...";
+                document.getElementById('choices-container').style.display = 'none';  // Masquer les choix après sélection
+            }
+        </script>
+    </div>
+</body>
+</html>
